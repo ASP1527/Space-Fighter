@@ -141,7 +141,7 @@ while runall:
           starwars3 = False
           displayinstruction += 1
         if quitbutton.isOver(pos): #if you press the quit button, the game quits
-          #print ("clicked")
+          print ("clicked")
           choice = False #chosen a button
           runall = False #stops everything and quits
 
