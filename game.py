@@ -1,7 +1,13 @@
-import pygame, os #importing the pygame module
+'''
+I have added some audio files. They will not work in repl as it does not support audio. The line numbers with audio are: lines 9, 10, 42, 565. Please un hashtag them if you are not using repl. Thank you.
+'''
+import pygame #importing the pygame module
 import random
 
 pygame.init() #initialising the game
+
+#bulletsound = pygame.mixer.Sound('bulletsound.wav')
+#music = pygame.mixer.music.load('song.wav')
 
 screenwidth = 800
 screenheight = 600
@@ -10,6 +16,7 @@ win = pygame.display.set_mode((screenwidth,screenheight)) #creating the box that
 
 pygame.display.set_caption("Game")
 
+icon = pygame.image.load('icon.png')
 s1 = pygame.image.load('starfighter.png')
 s2 = pygame.image.load('tiefighter.png')
 s3 = pygame.image.load('rocketup.png')
@@ -22,8 +29,34 @@ starwars2 = False
 starwars3 = False
 
 displayinstruction = 0
+score = 0
 
-while runall:
+x = 360 #defines x coordinate of character
+y = 480 #defines y coordinate
+width = 50 #width of character
+height = 50 #height of character
+vel = 6 #speed of character
+settings = False
+
+while runall: #while runall is true, everything runs
+  #pygame.mixer.music.play(-1)
+  showbutton = False #defining that showing the settings button is false
+  #defining some colours
+  green = (0,255,0)
+  yellow = (200,200,50)
+  red = (255,0,0)
+  grey = (200,200,200)
+  
+  #function that diplays the players score for 4 seconds when they lose
+  def scorescreen():
+    scorecount = 0 #variable that adds to act as a clock
+    font = pygame.font.SysFont('comicsans', 80) #loads a font
+    while scorecount < 4000: #checks whether scorecount is below a number
+      text = font.render("Score: " + str(score), True, (100, 200, 255))
+      win.blit(text,(300,300)) #displays score
+      scorecount += 1 #increments scorecount
+      pygame.display.update() #refreshes the screen
+
   class button(): #creates a button
     def __init__(self, color, x,y,width,height, text=''):
       self.color = color #button colour
@@ -43,30 +76,56 @@ while runall:
     def isOver(self, pos): #checks if the mouse is over the button
       if pos[0] > self.x and pos[0] < self.x + self.width:
         if pos[1] > self.y and pos[1] < self.y + self.height:
-          return True
+          return True #returns true if the mouse is over the button
               
-      return False
+      return False #if the mouse isn't over then it returns false
 
-  def redrawbutton(): #drawing all of the buttons
-    win.fill((0,0,0))
+  def redrawbutton(): #drawing all of the buttons on the window
+    win.fill((0,0,0)) #making a black background
     greenbutton.drawbutton(win)
     bluebutton.drawbutton(win)
     redbutton.drawbutton(win)
     whitebutton.drawbutton(win)
     quitbutton.drawbutton(win)
-    win.blit(s1, (100,5))
-    win.blit(s2, (453,5))
-    win.blit(s3, (458,445))
-    win.blit(s4, (100,445))
+    settings.drawbutton(win)
+    if showbutton == True: #if showbutton is true then it shows a setting menu with difficulty settings and a quit button
+      win.fill((0,0,0))
+      easybutton.drawbutton(win)
+      hardbutton.drawbutton(win)
+      medbutton.drawbutton(win)
+      quitsettings.drawbutton(win)
+      pygame.display.update()
+    else:
+      win.fill((0,0,0))
+      greenbutton.drawbutton(win)
+      bluebutton.drawbutton(win)
+      redbutton.drawbutton(win)
+      whitebutton.drawbutton(win)
+      quitbutton.drawbutton(win)
+      settings.drawbutton(win)
+      #draws icons to hint to the player what sprite they will play as
+      win.blit(s1, (100,5))
+      win.blit(s2, (453,5))
+      win.blit(s3, (458,445))
+      win.blit(s4, (100,445))
+      #shows settins icon
+      win.blit(icon, (650,0))
+      pygame.display.update()
     
 
   choice = True #variable that is true until you pick a button
   #defining the button, (colour, x, y, width, height, text)
+  #the buttons have a colour name because when I first added them, they were that colour
   greenbutton = button((0,0,0), 50,50,150,50,'Jedi Starfighter')
   bluebutton = button((0,0,0), 400,50,150,50,'Death Star')
   redbutton = button((0,0,0), 50,500,150,50,'Cough Cough')
   whitebutton = button((0,0,0), 400,500,150,50,'Rocket')
   quitbutton = button((0,0,0), 725,0,75,50,'Quit')
+  easybutton = button(green, 725,200,75,50,'Easy')
+  hardbutton = button(red, 725,550,75,50,'Hard')
+  medbutton = button(yellow, 725,375,75,50,'Normal')
+  settings = button((0,0,0), 600,0,100,50,' ')
+  quitsettings = button((0,0,0), 550,0,100,50,'Quit Settings')
   while choice: #while you have not chosen a button
     redrawbutton() #calls the function to draw the button
     pygame.display.update() #refreshes the display
@@ -79,8 +138,8 @@ while runall:
         pygame.quit()
 
       #checks which button you click and loads in the sprites for that option
-      if event.type == pygame.MOUSEBUTTONDOWN: 
-        if greenbutton.isOver(pos):
+      if event.type == pygame.MOUSEBUTTONDOWN:  #checks if a user clicks the mouse
+        if greenbutton.isOver(pos): #checks if the mouse clicks one of the buttons
           #print ("clicked")
           rocketup = pygame.image.load('starfighter.png')
           bg1 = pygame.image.load('corusant.png')
@@ -141,15 +200,24 @@ while runall:
           starwars3 = False
           displayinstruction += 1
         if quitbutton.isOver(pos): #if you press the quit button, the game quits
-          print ("clicked")
+          #print ("clicked")
           choice = False #chosen a button
           runall = False #stops everything and quits
-
-  x = 360 #defines x coordinate of character
-  y = 480 #defines y coordinate
-  width = 50 #width of character
-  height = 50 #height of character
-  vel = 7 #speed of character
+          quit = True
+        #this next bit of code changes the speed of the character depending on which difficulty you use
+        if easybutton.isOver(pos):
+          vel = 10
+          #print ("clicked")
+        if medbutton.isOver(pos):
+          vel = 6
+          #print ("clicked")
+        if hardbutton.isOver(pos):
+          vel = 4
+          #print ("clicked")
+        if quitsettings.isOver(pos):
+          showbutton = False
+        if settings.isOver(pos):
+          showbutton = True
 
   #defining the x & y coordinates and velocity of the "comets" 
   #it is all random
@@ -195,7 +263,8 @@ while runall:
     text1 = font.render("Score: " + str(score), True, (100, 200, 255))
     win.blit(text1, (10,10))
     pygame.display.update() #refreshes the screen
-    global hitbox #creates boxes around everything to check if the bullt hits the "comet"
+    #creates boxes around everything to check if the bullet hits the "comet"
+    global hitbox 
     hitbox = (x - 5, y, 50, 50)
     global cometbox
     cometbox = (cometx, comety, 50, 50)
@@ -228,13 +297,29 @@ while runall:
     #pygame.draw.rect(win, (255,0,0), cometbox3, 2)
     win.blit(comet4, (cometx4, comety4))
     #pygame.draw.rect(win, (255,0,0), cometbox4, 2)
-
+    '''
+    if y < cometbox[1] + cometbox[3] and y > cometbox[1]:
+      if x > cometbox[0] and x < cometbox[0] + cometbox[2]:
+        runall = False
+    if y < cometbox1[1] + cometbox1[3] and y > cometbox1[1]:
+      if x > cometbox1[0] and x < cometbox1[0] + cometbox1[2]:
+        runall = False
+    if y < cometbox2[1] + cometbox2[3] and y > cometbox2[1]:
+      if x > cometbox2[0] and x < cometbox2[0] + cometbox2[2]:
+        runall = False
+    if y < cometbox3[1] + cometbox3[3] and y > cometbox3[1]:
+      if x > cometbox3[0] and x < cometbox3[0] + cometbox3[2]:
+        runall = False
+    if y < cometbox4[1] + cometbox4[3] and y > cometbox4[1]:
+      if x > cometbox4[0] and x < cometbox4[0] + cometbox4[2]:
+        runall = False
+    '''
   font = pygame.font.SysFont('ActionIsShaded', 36) #loads a font
 
   startscreen = True
   instructionnumber = 1
 
-  #x and y coordinates for all of the text
+  #x and y coordinates for all of the text, I found it easier to use a vaiable and adjust from that
   t1x = (200)
   t2x = (200)
   t3x = (200)
@@ -368,7 +453,7 @@ while runall:
         if instructionnumber == 2: #ends instructions when all of the pages have been shown
           startscreen = False
     
-    win.fill((0,0,0))
+    win.fill((0,0,0)) #fills the screen black 
 
     if instructionnumber == 1:
 
@@ -448,23 +533,9 @@ while runall:
           comety4 = random.randint(-300,-100)
           cometvel4 = random.randint(1,3)
           score += 1
-    '''
-    if y > comety and y + 50 < comety + 50:
-      if x > cometx and x + 50 < cometx + 50:
-        run = False
-    if y > comety1 and y + 50 < comety1 + 50:
-      if x > cometx1 and x + 50 < cometx1 + 50:
-        run = False
-    if y > comety2 and y + 50 < comety2 + 50:
-      if x > cometx2 and x + 50 < cometx2 + 50:
-        run = False
-    if y > comety3 and y + 50 < comety3 + 50:
-      if x > cometx3 and x + 50 < cometx3 + 50:
-        run = False
-    if y > comety4 and y + 50 < comety4 + 50:
-      if x > cometx4 and x + 50 < cometx4 + 50:
-        run = False
-    '''
+    
+    
+    
     #makes the comets move down the screen:
     comety += cometvel
     comety1 += cometvel1
@@ -491,6 +562,7 @@ while runall:
       upshoot = True
       if len(bullets) < 5: #limits the number of bullets
         bullets.append(projectile(round(x + width // 2), round(y + height // 2), 6, (0,255,0), facing))
+        #bulletsound.play()
     
     if keys[pygame.K_LEFT]: #character goes left if left arrow is pressed
       #if the character goes off the screen they go to the other side
@@ -524,5 +596,8 @@ while runall:
     redrawbg(bg1, rocketup) #draws the sprite, background and comets by calling the function
     pygame.display.update() #refreshes the display
     clock.tick(25) #how fast the screen refreshes
+  
+  if runall == True: #if the game has not been quit then the score is shown
+    scorescreen()
 
 pygame.quit() #quits the game
